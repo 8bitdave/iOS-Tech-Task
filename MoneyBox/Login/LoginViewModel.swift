@@ -29,8 +29,8 @@ final class LoginViewModel {
     var loginAction: ((Networking.LoginResponse.User) -> Void)?
     
     // MARK: - Exposed API
-    public var emailFieldText: CurrentValueSubject<String, Never> = .init("")
-    public var passwordFieldText: CurrentValueSubject<String, Never> = .init("")
+    public var emailFieldText: CurrentValueSubject<String, Never> = .init("test+ios2@moneyboxapp.com")
+    public var passwordFieldText: CurrentValueSubject<String, Never> = .init("P455word12")
     public var loginButtonEnabled: CurrentValueSubject<Bool, Never> = .init(false)
     public var state: CurrentValueSubject<LoginViewState, Never> = .init(.ready)
     
@@ -71,7 +71,12 @@ final class LoginViewModel {
             switch result {
             case .success(let response):
                 self?.state.send(.success)
-                self?.loginAction?(response.user)
+                SessionManager().setUserToken(response.session.bearerToken) // Make injectable
+                
+                // Allow the success screen to show
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0) {
+                    self?.loginAction?(response.user)
+                }
             case .failure(let error):
                 self?.state.send(.error(error.localizedDescription))
             }

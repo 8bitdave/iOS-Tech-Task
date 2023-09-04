@@ -12,6 +12,7 @@ class BackgroundCurveView: UIView {
     // MARK: - Properties
     var path: UIBezierPath!
     weak var shapeLayer: CAShapeLayer?
+    var shouldAnimate: Bool = false
     
     
     // MARK: - Init
@@ -57,7 +58,7 @@ class BackgroundCurveView: UIView {
         layer.addSublayer(shapeLayer)
         let animation = CABasicAnimation(keyPath: "strokeEnd")
         animation.fromValue = 0
-        animation.duration = 4.5
+        animation.duration = shouldAnimate ? 4.5 : 0.00
         shapeLayer.add(animation, forKey: "Curve Animation")
         layer.addSublayer(shapeLayer)
         

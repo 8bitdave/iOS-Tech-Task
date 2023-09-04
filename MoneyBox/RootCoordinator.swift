@@ -22,6 +22,10 @@ final class RootCoordinator: Coordinator {
     init(navigationController: UINavigationController, dataProvider: DataProviderLogic) {
         self.navigationController = navigationController
         self.dataProvider = dataProvider
+        
+        navigationController.navigationBar.backgroundColor = UIColor.backgroundColor
+        navigationController.navigationBar.tintColor = UIColor.backgroundColor
+        navigationController.isNavigationBarHidden = true
     }
     
     func start() {
@@ -39,6 +43,7 @@ final class RootCoordinator: Coordinator {
             
             loginCoordinator.start()
             childCoordinators.append(loginCoordinator)
+            
         }
     }
     

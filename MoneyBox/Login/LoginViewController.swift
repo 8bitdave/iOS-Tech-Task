@@ -72,7 +72,7 @@ final class LoginViewController: UIViewController {
         let label = UILabel()
         label.font = UIFont(name: "SF Pro Text Bold", size: 34)
         label.text = "Login"
-        label.textColor = .lightTeal
+        label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isHidden = false
         return label
@@ -88,6 +88,7 @@ final class LoginViewController: UIViewController {
     private let backgroundCurveView: UIView = {
         let view = BackgroundCurveView()
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.shouldAnimate = true
         return view
     }()
     
