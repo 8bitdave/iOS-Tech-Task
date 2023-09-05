@@ -44,17 +44,8 @@ final class AccountsHeaderView: UIView {
     
     // MARK: - Exposed Properties
     
-    var name: String = "" {
-        didSet {
-            calculateWelcomeMessage()
-        }
-    }
-    
-    var totalPlanValue: Double = 0.00 {
-        didSet {
-            setTotalValueLabel()
-        }
-    }
+    var name: String = ""
+    var totalPlanValue: Double = 0.00
     
     
     // MARK: - Init
@@ -62,13 +53,12 @@ final class AccountsHeaderView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        backgroundColor = .clear
+        backgroundColor = .systemOrange
         
         addSubview(titleLabel)
         addSubview(welcomeLabel)
         addSubview(planValueTextLabel)
         addSubview(totalValueLabel)
-        
         layoutViews()
     }
     
@@ -86,35 +76,33 @@ final class AccountsHeaderView: UIView {
             totalValueLabel.topAnchor.constraint(equalTo: topAnchor, constant: 20),
             totalValueLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             totalValueLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-            totalValueLabel.heightAnchor.constraint(equalToConstant: 200),
+//            totalValueLabel.heightAnchor.constraint(equalToConstant: 100),
             
             // Title Label
             titleLabel.topAnchor.constraint(equalTo: totalValueLabel.bottomAnchor, constant: 20),
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+//            titleLabel.heightAnchor.constraint(equalToConstant: 100),
             
             // Plan Value Text Label
             planValueTextLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 40),
             planValueTextLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             planValueTextLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+//            planValueTextLabel.heightAnchor.constraint(equalToConstant: 100),
             
             // Total Value Label
             totalValueLabel.topAnchor.constraint(equalTo: planValueTextLabel.bottomAnchor, constant: 40),
             totalValueLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             totalValueLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-            totalValueLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -40)
+            totalValueLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -40),
+//            totalValueLabel.heightAnchor.constraint(equalToConstant: 100),
+            
         ])
     }
     
-    private func calculateWelcomeMessage() {
+   func refresh() {
         DispatchQueue.main.async {
             self.titleLabel.text = "Hello, \(self.name)"
-            self.setNeedsDisplay()
-        }
-    }
-    
-    private func setTotalValueLabel() {
-        DispatchQueue.main.async {
             self.totalValueLabel.text = "£\(self.totalPlanValue)"
             self.setNeedsDisplay()
         }

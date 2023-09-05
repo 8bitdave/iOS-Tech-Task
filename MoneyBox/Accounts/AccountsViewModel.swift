@@ -24,7 +24,7 @@ struct AccountsModel {
 
 final class AccountsViewModel {
     
-    enum AccountState {
+    enum ViewState {
         case loading
         case loaded(AccountsModel)
         case error(String)
@@ -32,10 +32,11 @@ final class AccountsViewModel {
     
     // MARK: - Properties
     private let dataProvider: DataProviderLogic
+    private var accounts: [Account] = []
+    var state: CurrentValueSubject<ViewState, Never> = .init(.loading)
     
-    var accounts: CurrentValueSubject<[Account], Never> = .init([])
-    
-    var state: CurrentValueSubject<AccountState, Never> = .init(.loading)
+    // MARK: - Coordinator Injection
+    var navigateToAccountAction: ((Account) -> Void)?
     
     // MARK: - Init
     init(dataProvider: DataProviderLogic) {
@@ -61,6 +62,7 @@ final class AccountsViewModel {
                 }
 
                 // Success
+                self.accounts = accountModel.accounts
                 self.state.send(.loaded(accountModel))
                 
             case .failure(let error):
@@ -70,6 +72,13 @@ final class AccountsViewModel {
         }
         
         print("Fetching data...")
+    }
+    
+    func didSelectAccount(at index: Int) {
+        // Guard that we have a valid account
+        guard let account = accounts[safe: index] else { return }
+        // Tell coordinator to navigate us to the specified account.
+        navigateToAccountAction?(account)
     }
     
     // MARK: - Helper function

@@ -29,9 +29,19 @@ final class AccountsCoordinator: Coordinator {
         let accountsViewModel = AccountsViewModel(dataProvider: dataProvider)
         let viewController = AccountsViewController(accountsViewModel: accountsViewModel)
         
+        // Inject closure to handle callback for navigating to a specific account.
+        accountsViewModel.navigateToAccountAction = { account in
+            self.navigateToAccount(account: account)
+        }
+        
         DispatchQueue.main.async {
             self.navigationController.setViewControllers([viewController], animated: false)
         }
     }
     
+    private func navigateToAccount(account: Account) {
+        let coordinator = AccountDetailCoordinator(navgationController: navigationController, dataProvider: dataProvider, account: account)
+        coordinator.start()
+        childCoordinators.append(coordinator)
+    }
 }

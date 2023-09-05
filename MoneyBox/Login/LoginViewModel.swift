@@ -9,14 +9,16 @@ import Combine
 import Foundation
 import Networking
 
-enum LoginViewState {
-    case ready
-    case loading
-    case success
-    case error(String)
-}
+
 
 final class LoginViewModel {
+    
+    enum ViewState {
+        case ready
+        case loading
+        case success
+        case error(String)
+    }
     
     // MARK: - Properties
     private var cancellables: Set<AnyCancellable> = []
@@ -25,14 +27,14 @@ final class LoginViewModel {
     
 //    private let networkManager: NetworkManagable
 
-    // MARK: - Coordinator Closures
+    // MARK: - Coordinator Injection
     var loginAction: ((Networking.LoginResponse.User) -> Void)?
     
     // MARK: - Exposed API
     public var emailFieldText: CurrentValueSubject<String, Never> = .init("test+ios2@moneyboxapp.com")
     public var passwordFieldText: CurrentValueSubject<String, Never> = .init("P455word12")
     public var loginButtonEnabled: CurrentValueSubject<Bool, Never> = .init(false)
-    public var state: CurrentValueSubject<LoginViewState, Never> = .init(.ready)
+    public var state: CurrentValueSubject<ViewState, Never> = .init(.ready)
     
     // MARK: - Init
     init(dataProvider: DataProviderLogic) {

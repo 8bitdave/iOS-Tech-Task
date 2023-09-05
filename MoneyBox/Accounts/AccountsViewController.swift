@@ -19,30 +19,8 @@ final class AccountsViewController: UIViewController {
     
     // MARK: - Properties
     private let viewModel: AccountsViewModel
-    
-    lazy var tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.backgroundColor = UIColor.backgroundColor
-        return tableView
-    }()
-    
-    private var loadingView: UIActivityIndicatorView = {
-        let activityView = UIActivityIndicatorView(style: .large)
-        activityView.color = .gray
-        activityView.translatesAutoresizingMaskIntoConstraints = false
-        activityView.startAnimating()
-        
-        return activityView
-    }()
-    
-    private var tableHeaderView: AccountsHeaderView = {
-        let headerView = AccountsHeaderView(frame: CGRect(x: 0, y: 0, width: 375, height: 400))
-        headerView.name = "David Gray"
-        headerView.totalPlanValue = 7000.00
-        headerView.layoutSubviews()
-        return headerView
-    }()
+//    private let tableViewDelegate = AccountsTableViewDelegate()
+    private var cancellables: Set<AnyCancellable> = []
     
     lazy var dataSource: DataSource = {
         let dataSource = DataSource(tableView: tableView) { (tableView, indexPath, account) -> UITableViewCell? in
@@ -61,7 +39,33 @@ final class AccountsViewController: UIViewController {
         return dataSource
     }()
     
-    private var cancellables: Set<AnyCancellable> = []
+    // MARK: - UI Properties
+    lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.backgroundColor = UIColor.backgroundColor
+        tableView.delegate = self
+        return tableView
+    }()
+    
+    
+    private var loadingView: UIActivityIndicatorView = {
+        let activityView = UIActivityIndicatorView(style: .large)
+        activityView.color = .gray
+        activityView.translatesAutoresizingMaskIntoConstraints = false
+        activityView.startAnimating()
+        
+        return activityView
+    }()
+    
+    private var tableHeaderView: AccountsHeaderView = {
+        let headerView = AccountsHeaderView(frame: CGRect(x: 0, y: 0, width: 375, height: 400))
+        headerView.name = "David Gray"
+        headerView.totalPlanValue = 7000.00
+        headerView.translatesAutoresizingMaskIntoConstraints = false
+        return headerView
+    }()
+    
     
     // MARK: - Init
     init(accountsViewModel: AccountsViewModel) {
@@ -106,6 +110,9 @@ final class AccountsViewController: UIViewController {
             case .loading:
                 print("show loading screen")
             case .loaded(let accountModel):
+                self.tableHeaderView.totalPlanValue = accountModel.totalPlanValue
+                
+                self.tableHeaderView.refresh()
                 self.reloadData(data: accountModel.accounts)
             case .error(let error):
                 print("Got error! \(error)")
@@ -120,7 +127,6 @@ final class AccountsViewController: UIViewController {
         tableView.dataSource = dataSource
         tableView.backgroundView = BackgroundCurveView()
         tableView.separatorStyle = .none
-        tableView.tableHeaderView = tableHeaderView
     }
     
     func layoutViews() {
@@ -139,10 +145,20 @@ final class AccountsViewController: UIViewController {
         snapshot.appendItems(data)
         dataSource.apply(snapshot, animatingDifferences: true)
     }
+    
+    
 }
-
+// MARK: - Constants
 extension AccountsViewController {
     enum Constants {
         static let accountReuseIdentifier = "AccountCell"
     }
+}
+
+extension AccountsViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        viewModel.didSelectAccount(at: indexPath.row)
+    }
+    
 }

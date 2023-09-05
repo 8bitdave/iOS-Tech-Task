@@ -21,4 +21,14 @@ extension UIColor {
     static var backgroundLightGray = UIColor(named: "light_gray")!
     
     static var backgroundColor = UIColor(named: "background_color")!
+    
+    static var buttonDisabledColor = UIColor(named: "button_disabled_color")!
+}
+
+
+extension Collection {
+    /// Returns the element at the specified index if it is within bounds, otherwise nil.
+    subscript (safe index: Index) -> Element? {
+        return indices.contains(index) ? self[index] : nil
+    }
 }
