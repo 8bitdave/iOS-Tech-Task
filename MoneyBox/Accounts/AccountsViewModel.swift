@@ -75,7 +75,7 @@ final class AccountsViewModel {
                 }
 
                 // Success
-                self.totalPlanValue = String.createCurrencyString(from: accountResponse.totalPlanValue ?? 0.00, currency: .GBP)
+                self.totalPlanValue = String.createCurrencyString(from: accountResponse.totalPlanValue?.rounded(toPlaces: 2) ?? 0.00, currency: .GBP)
                 self.accounts = accountModel.accounts
                 self.viewState.send(.loaded(accountModel))
                 

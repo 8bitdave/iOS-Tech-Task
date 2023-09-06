@@ -32,21 +32,34 @@ final class AccountDetailViewController: UIViewController {
     
     private lazy var accountNameLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont(name: "SF Pro Text Bold", size: 34)
+        label.font = UIFont.preferredFont(forTextStyle: .largeTitle)
         label.text = viewModel.accountName
         label.textColor = .lightDarkTealInverse
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.isHidden = false
+        label.numberOfLines = 0
+        return label
+    }()
+    
+    private lazy var planValueLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.preferredFont(forTextStyle: .title1)
+        label.text = viewModel.planValue
+        label.textColor = .lightDarkTealInverse
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
         label.isHidden = false
         return label
     }()
     
     private lazy var moneyBoxLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont(name: "SF Pro Text Bold", size: 34)
+        label.font = UIFont.preferredFont(forTextStyle: .title1)
         label.text = viewModel.moneyBoxValue.value
         label.textColor = .lightDarkTealInverse
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isHidden = false
+        label.numberOfLines = 0
         return label
     }()
     
@@ -72,6 +85,22 @@ final class AccountDetailViewController: UIViewController {
         return spinner
     }()
     
+    private var owlImage: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "money_box_owl") ?? UIImage())
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    
+    var labelStackView: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.distribution = .equalSpacing
+        stack.spacing = 8
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
+    
     // MARK: - Init
     init(viewModel: AccountDetailViewModel) {
         self.viewModel = viewModel
@@ -84,9 +113,12 @@ final class AccountDetailViewController: UIViewController {
     
     // MARK: - View Lifecycle
     override func viewDidLoad() {
-//        view.addSubview(backgroundCurveView)
-        view.addSubview(accountNameLabel)
-        view.addSubview(moneyBoxLabel)
+        view.addSubview(labelStackView)
+        labelStackView.addArrangedSubview(accountNameLabel)
+        labelStackView.addArrangedSubview(planValueLabel)
+        labelStackView.addArrangedSubview(moneyBoxLabel)
+    
+        view.addSubview(owlImage)
         view.addSubview(alertView)
         view.addSubview(addMoneyButton)
         
@@ -142,20 +174,12 @@ final class AccountDetailViewController: UIViewController {
     private func layoutViews() {
         NSLayoutConstraint.activate([
             
-            // MARK: Background View
-//            backgroundCurveView.topAnchor.constraint(equalTo: view.topAnchor),
-//            backgroundCurveView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-//            backgroundCurveView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-//            backgroundCurveView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            labelStackView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: 20),
+            labelStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            labelStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
-            // MARK: Title Label
-            accountNameLabel.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: 20),
-            accountNameLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            accountNameLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            
-            moneyBoxLabel.topAnchor.constraint(equalTo: accountNameLabel.bottomAnchor, constant: 20),
-            moneyBoxLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            moneyBoxLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            owlImage.topAnchor.constraint(equalTo: labelStackView.bottomAnchor, constant: 40),
+            owlImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
             // MARK: Add Money Button Constraints
             addMoneyButton.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: -20),

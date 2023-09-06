@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		55285E872AA6810300C973FB /* AccountsTableTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55285E862AA6810300C973FB /* AccountsTableTableViewController.swift */; };
 		5558AE042AA7C1F4005ADD27 /* AccountDetailCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5558AE032AA7C1F4005ADD27 /* AccountDetailCoordinator.swift */; };
 		5558AE062AA7C29D005ADD27 /* AccountDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5558AE052AA7C29D005ADD27 /* AccountDetailViewController.swift */; };
 		5558AE082AA7C308005ADD27 /* AccountDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5558AE072AA7C308005ADD27 /* AccountDetailViewModel.swift */; };
@@ -20,6 +19,7 @@
 		55C065462AA91193007EF6D5 /* Accounts_Error_InvestorID.json in Resources */ = {isa = PBXBuildFile; fileRef = 55C065442AA90D4B007EF6D5 /* Accounts_Error_InvestorID.json */; };
 		55C065472AA9119C007EF6D5 /* Bundle+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C065422AA90A72007EF6D5 /* Bundle+Extension.swift */; };
 		55C065492AA91991007EF6D5 /* Invalid_File.json in Resources */ = {isa = PBXBuildFile; fileRef = 55C065482AA91991007EF6D5 /* Invalid_File.json */; };
+		55C0654B2AA935CD007EF6D5 /* Double+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C0654A2AA935CD007EF6D5 /* Double+Extension.swift */; };
 		55F14AEC2AA1F429004AFB6E /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F14AEB2AA1F429004AFB6E /* LoginViewModel.swift */; };
 		55F14AEE2AA1FBFD004AFB6E /* PaddedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F14AED2AA1FBFD004AFB6E /* PaddedTextView.swift */; };
 		55F14AF22AA274F1004AFB6E /* BackgroundCurveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F14AF12AA274F1004AFB6E /* BackgroundCurveView.swift */; };
@@ -57,7 +57,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		55285E862AA6810300C973FB /* AccountsTableTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsTableTableViewController.swift; sourceTree = "<group>"; };
 		5558AE032AA7C1F4005ADD27 /* AccountDetailCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDetailCoordinator.swift; sourceTree = "<group>"; };
 		5558AE052AA7C29D005ADD27 /* AccountDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDetailViewController.swift; sourceTree = "<group>"; };
 		5558AE072AA7C308005ADD27 /* AccountDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDetailViewModel.swift; sourceTree = "<group>"; };
@@ -68,6 +67,7 @@
 		55C065422AA90A72007EF6D5 /* Bundle+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extension.swift"; sourceTree = "<group>"; };
 		55C065442AA90D4B007EF6D5 /* Accounts_Error_InvestorID.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Accounts_Error_InvestorID.json; sourceTree = "<group>"; };
 		55C065482AA91991007EF6D5 /* Invalid_File.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Invalid_File.json; sourceTree = "<group>"; };
+		55C0654A2AA935CD007EF6D5 /* Double+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extension.swift"; sourceTree = "<group>"; };
 		55F14AEB2AA1F429004AFB6E /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		55F14AED2AA1FBFD004AFB6E /* PaddedTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddedTextView.swift; sourceTree = "<group>"; };
 		55F14AF12AA274F1004AFB6E /* BackgroundCurveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundCurveView.swift; sourceTree = "<group>"; };
@@ -153,7 +153,6 @@
 				55F14B102AA51DD4004AFB6E /* AccountsViewModel.swift */,
 				55F14B122AA521EB004AFB6E /* AccountCell.swift */,
 				55F14B182AA66889004AFB6E /* AccountsHeaderView.swift */,
-				55285E862AA6810300C973FB /* AccountsTableTableViewController.swift */,
 			);
 			path = Accounts;
 			sourceTree = "<group>";
@@ -195,6 +194,7 @@
 				55F14AFE2AA371B4004AFB6E /* RootCoordinator.swift */,
 				5558AE092AA7D100005ADD27 /* String+Extension.swift */,
 				55C0653C2AA8D29F007EF6D5 /* AlertView.swift */,
+				55C0654A2AA935CD007EF6D5 /* Double+Extension.swift */,
 			);
 			path = MoneyBox;
 			sourceTree = "<group>";
@@ -360,7 +360,7 @@
 				55F14AEC2AA1F429004AFB6E /* LoginViewModel.swift in Sources */,
 				55F14B012AA3777E004AFB6E /* LoginCoordinator.swift in Sources */,
 				55F14B132AA521EB004AFB6E /* AccountCell.swift in Sources */,
-				55285E872AA6810300C973FB /* AccountsTableTableViewController.swift in Sources */,
+				55C0654B2AA935CD007EF6D5 /* Double+Extension.swift in Sources */,
 				55F14AF22AA274F1004AFB6E /* BackgroundCurveView.swift in Sources */,
 				5558AE042AA7C1F4005ADD27 /* AccountDetailCoordinator.swift in Sources */,
 				55F14B112AA51DD4004AFB6E /* AccountsViewModel.swift in Sources */,

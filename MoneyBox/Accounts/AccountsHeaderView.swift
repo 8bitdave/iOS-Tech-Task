@@ -16,6 +16,7 @@ final class AccountsListHeader: UITableViewHeaderFooterView {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Your Accounts"
         label.font = UIFont.preferredFont(forTextStyle: .largeTitle)
+        label.adjustsFontForContentSizeCategory = true
         label.textColor = .lightDarkTealInverse
         return label
     }()
@@ -24,6 +25,7 @@ final class AccountsListHeader: UITableViewHeaderFooterView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.preferredFont(forTextStyle: .title2)
+        label.adjustsFontForContentSizeCategory = true
         label.textColor = .lightDarkTealInverse
         return label
     }()
@@ -32,6 +34,7 @@ final class AccountsListHeader: UITableViewHeaderFooterView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.preferredFont(forTextStyle: .headline)
+        label.adjustsFontForContentSizeCategory = true
         label.textColor = .lightDarkTealInverse
         label.text = "Total Plan Value:"
         return label
@@ -42,6 +45,7 @@ final class AccountsListHeader: UITableViewHeaderFooterView {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "\(totalPlanValue)"
         label.font = UIFont.preferredFont(forTextStyle: .largeTitle)
+        label.adjustsFontForContentSizeCategory = true
         label.textColor = .lightDarkTealInverse
         return label
     }()

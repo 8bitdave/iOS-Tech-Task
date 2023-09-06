@@ -27,7 +27,7 @@ final class AccountDetailViewModel {
     let accountType = "Individual Savings"
     let accountName: String
     let planValue: String
-    var moneyBoxValue: CurrentValueSubject<String, Never>
+    var moneyBoxValue: CurrentValueSubject<String, Never> = .init("")
     
     // MARK: Private
     private var dataProvider: DataProviderLogic
@@ -39,10 +39,10 @@ final class AccountDetailViewModel {
     // MARK: - Init
     init(account: Account, dataProvider: DataProviderLogic) {
         self.accountName = account.name
-        self.planValue = String.createCurrencyString(from: account.planValue, currency: .GBP)
-        self.moneyBoxValue = .init(String.createCurrencyString(from: account.moneyBoxValue, currency: .GBP))
+        self.planValue = "Plan value: " + String.createCurrencyString(from: account.planValue, currency: .GBP)
         self.dataProvider = dataProvider
         self.investorID = account.investorID
+        self.moneyBoxValue.value = createMoneyBoxString(from: account.moneyBoxValue)
     }
     
     
@@ -59,7 +59,7 @@ final class AccountDetailViewModel {
                 case .success(let response):
                     guard let newMoneyBoxValue = response.moneybox else { return }
                     self.viewState.send(.loaded)
-                    self.moneyBoxValue.value = String.createCurrencyString(from: newMoneyBoxValue, currency: .GBP)
+                    self.moneyBoxValue.value = self.createMoneyBoxString(from: newMoneyBoxValue)
                 case .failure(let error):
                     let errorString = self.createErrorString(from: error)
                     self.shouldFail = false
@@ -70,7 +70,10 @@ final class AccountDetailViewModel {
        
     }
     
-    // MARK: - Error
+    private func createMoneyBoxString(from value: Double) -> String {
+        return "Moneybox: " + String.createCurrencyString(from: value, currency: .GBP)
+    }
+    
     private func createErrorString(from error: Error) -> String {
         return "\(error.localizedDescription) Please try again."
         
