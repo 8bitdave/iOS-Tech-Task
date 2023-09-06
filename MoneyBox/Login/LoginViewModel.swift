@@ -14,13 +14,15 @@ import Networking
 final class LoginViewModel {
     
     enum ViewState {
-        case ready
-        case loading
-        case success
+        case initialised
+        case loggingIn
+        case loggedIn
         case error(String)
     }
     
     // MARK: - Properties
+    
+    // MARK: Private
     private var cancellables: Set<AnyCancellable> = []
     private let dataProvider: DataProviderLogic
     private let networkSession: SessionManager = SessionManager()
@@ -30,11 +32,12 @@ final class LoginViewModel {
     // MARK: - Coordinator Injection
     var loginAction: ((Networking.LoginResponse.User) -> Void)?
     
-    // MARK: - Exposed API
-    public var emailFieldText: CurrentValueSubject<String, Never> = .init("test+ios2@moneyboxapp.com")
-    public var passwordFieldText: CurrentValueSubject<String, Never> = .init("P455word12")
-    public var loginButtonEnabled: CurrentValueSubject<Bool, Never> = .init(false)
-    public var state: CurrentValueSubject<ViewState, Never> = .init(.ready)
+    // MARK: - Public
+    let loginButtonTitle = "Login"
+    var emailFieldText: CurrentValueSubject<String, Never> = .init("test+ios2@moneyboxapp.com")
+    var passwordFieldText: CurrentValueSubject<String, Never> = .init("P455word12")
+    var loginButtonEnabled: CurrentValueSubject<Bool, Never> = .init(false)
+    var viewState: CurrentValueSubject<ViewState, Never> = .init(.initialised)
     
     // MARK: - Init
     init(dataProvider: DataProviderLogic) {
@@ -64,7 +67,7 @@ final class LoginViewModel {
         }
         
         // Set state to loading to lock UI.
-        state.value = .loading
+        viewState.value = .loggingIn
         
         // Create request
         let loginRequest = LoginRequest(email: emailFieldText.value, password: passwordFieldText.value)
@@ -72,15 +75,15 @@ final class LoginViewModel {
         dataProvider.login(request: loginRequest) { [weak self] result in
             switch result {
             case .success(let response):
-                self?.state.send(.success)
+                self?.viewState.send(.loggedIn)
                 SessionManager().setUserToken(response.session.bearerToken) // Make injectable
                 
                 // Allow the success screen to show
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     self?.loginAction?(response.user)
                 }
             case .failure(let error):
-                self?.state.send(.error(error.localizedDescription))
+                self?.viewState.send(.error(error.localizedDescription))
             }
         }
         

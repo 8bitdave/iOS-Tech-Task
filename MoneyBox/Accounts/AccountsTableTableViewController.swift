@@ -6,16 +6,3 @@
 //
 
 import UIKit
-
-final class AccountsTableViewDelegate: NSObject, UITableViewDelegate {
-    
-    // MARK: - Init
-    init(viewModel: AccountsViewModel) {
-        
-    }
-    
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        return AccountsHeaderView()
-    }
-    
-}

@@ -24,8 +24,8 @@ final class RootCoordinator: Coordinator {
         self.dataProvider = dataProvider
         
         navigationController.navigationBar.backgroundColor = UIColor.backgroundColor
-        navigationController.navigationBar.tintColor = UIColor.backgroundColor
-        navigationController.isNavigationBarHidden = true
+        navigationController.navigationBar.tintColor = UIColor.lightDarkTealInverse
+        navigationController.isNavigationBarHidden = false
     }
     
     func start() {

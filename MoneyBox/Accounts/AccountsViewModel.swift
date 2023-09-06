@@ -25,22 +25,34 @@ struct AccountsModel {
 final class AccountsViewModel {
     
     enum ViewState {
+        case initialised
         case loading
         case loaded(AccountsModel)
         case error(String)
     }
     
     // MARK: - Properties
+    
+    // Private
     private let dataProvider: DataProviderLogic
     private var accounts: [Account] = []
-    var state: CurrentValueSubject<ViewState, Never> = .init(.loading)
+    
+    // Public
+    var viewState: CurrentValueSubject<ViewState, Never> = .init(.initialised)
+    var shouldReload: Bool = false
+    let refreshButtonTitle = "Refresh..."
+    var totalPlanValue: String = ""
+    var welcomeString: String
     
     // MARK: - Coordinator Injection
     var navigateToAccountAction: ((Account) -> Void)?
     
+    var shouldFail = true
+    
     // MARK: - Init
-    init(dataProvider: DataProviderLogic) {
+    init(dataProvider: DataProviderLogic, user: Networking.LoginResponse.User) {
         self.dataProvider = dataProvider
+        self.welcomeString = "Welcome " + (user.firstName ?? "")
     }
     
     // MARK: -
@@ -48,26 +60,28 @@ final class AccountsViewModel {
         // Fetch the Accounts data from the network using the users bearer token
         // If success, update the state so that the VC can subscribe to state changes
         // and get the
-        state.send(.loading)
+        viewState.send(.loading)
         
         dataProvider.fetchProducts { result in
+            
+            self.shouldReload = false
+            
             switch result {
             case .success(let accountResponse):
-                print("🥶", accountResponse.accounts!)
-                
                 
                 guard let accountModel = self.createAccountInfo(accountResponse: accountResponse) else {
-                    self.state.send(.error("Parsing error"))
+                    self.viewState.send(.error("Parsing error"))
                     return
                 }
 
                 // Success
+                self.totalPlanValue = String.createCurrencyString(from: accountResponse.totalPlanValue ?? 0.00, currency: .GBP)
                 self.accounts = accountModel.accounts
-                self.state.send(.loaded(accountModel))
+                self.viewState.send(.loaded(accountModel))
                 
             case .failure(let error):
                 // Show error UI on VC
-                self.state.send(.error(error.localizedDescription))
+                self.viewState.send(.error(error.localizedDescription))
             }
         }
         
@@ -77,6 +91,9 @@ final class AccountsViewModel {
     func didSelectAccount(at index: Int) {
         // Guard that we have a valid account
         guard let account = accounts[safe: index] else { return }
+        // Let the VC know it should request data when navigating back from the account detail view
+        shouldReload = true
+        
         // Tell coordinator to navigate us to the specified account.
         navigateToAccountAction?(account)
     }
@@ -103,6 +120,8 @@ final class AccountsViewModel {
             
             return account
         })
+        
+        guard !accounts.isEmpty else { return nil }
         
         return AccountsModel(totalPlanValue: accountResponse.totalPlanValue ?? 0.00, accounts: accounts)
         

@@ -43,8 +43,8 @@ class BackgroundCurveView: UIView {
             controlPoint1: CGPoint(x: self.frame.size.width * 0.5, y: (self.frame.size.height * 0.5) + 50),
             controlPoint2: CGPoint(x: self.frame.size.width * 0.5, y: (self.frame.size.height * 0.3) - 30)
         )
-        path.addLine(to: CGPoint(x: self.frame.size.width, y: self.frame.size.height + 20))
-        path.addLine(to: CGPoint(x: -20, y: self.frame.size.height))
+        path.addLine(to: CGPoint(x: self.frame.size.width + 40, y: self.frame.size.height + 40))
+        path.addLine(to: CGPoint(x: -40, y: self.frame.size.height + 40))
         path.close()
         
         let shapeLayer = CAShapeLayer()

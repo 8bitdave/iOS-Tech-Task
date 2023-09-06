@@ -19,7 +19,6 @@ final class AccountsViewController: UIViewController {
     
     // MARK: - Properties
     private let viewModel: AccountsViewModel
-//    private let tableViewDelegate = AccountsTableViewDelegate()
     private var cancellables: Set<AnyCancellable> = []
     
     lazy var dataSource: DataSource = {
@@ -58,14 +57,37 @@ final class AccountsViewController: UIViewController {
         return activityView
     }()
     
-    private var tableHeaderView: AccountsHeaderView = {
-        let headerView = AccountsHeaderView(frame: CGRect(x: 0, y: 0, width: 375, height: 400))
-        headerView.name = "David Gray"
-        headerView.totalPlanValue = 7000.00
-        headerView.translatesAutoresizingMaskIntoConstraints = false
-        return headerView
+    private let activityIndicator: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView(style: .large)
+        spinner.color = .lightDarkTealInverse
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.hidesWhenStopped = true
+        spinner.stopAnimating()
+        return spinner
     }()
     
+    private let alertView: AlertView = {
+        let alert = AlertView()
+        alert.translatesAutoresizingMaskIntoConstraints = false
+        alert.isHidden = true
+        return alert
+    }()
+    
+    private lazy var refreshButton: UIButton = {
+        let button = UIButton()
+        button.setTitle(viewModel.refreshButtonTitle, for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = UIColor.lightTeal
+        button.setTitleColor(.darkTeal, for: .normal)
+        button.layer.cornerCurve = .continuous
+        button.layer.cornerRadius = 9
+        button.setTitleColor(.gray, for: .selected)
+        button.titleLabel?.adjustsFontForContentSizeCategory = true
+        button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .title1)
+        button.contentEdgeInsets = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+        button.isHidden = true
+        return button
+    }()
     
     // MARK: - Init
     init(accountsViewModel: AccountsViewModel) {
@@ -78,13 +100,12 @@ final class AccountsViewController: UIViewController {
     }
 
     // MARK: - View Lifecycle
-    
     override func loadView() {
         super.loadView()
         
         view = UIView()
         view.addSubview(tableView)
-//        view.addSubview(loadingView)
+        view.addSubview(activityIndicator)
         view.backgroundColor = .systemBackground
     }
     
@@ -92,6 +113,9 @@ final class AccountsViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = UIColor.backgroundColor
+        view.addSubview(BackgroundCurveView())
+        view.addSubview(alertView)
+        view.addSubview(refreshButton)
 
         layoutViews()
         configureTableView()
@@ -103,38 +127,79 @@ final class AccountsViewController: UIViewController {
         viewModel.fetch()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        // Refresh data if required.
+        if viewModel.shouldReload {
+            viewModel.fetch()
+        }
+    }
+    
     // MARK: - Subscriptions
     private func subscribe() {
-        viewModel.state.sink { state in
+        viewModel.viewState
+            .receive(on: DispatchQueue.main)
+            .sink { state in
             switch state {
             case .loading:
                 print("show loading screen")
-            case .loaded(let accountModel):
-                self.tableHeaderView.totalPlanValue = accountModel.totalPlanValue
+                self.activityIndicator.startAnimating()
+                self.updateRefreshButton(hidden: true)
+                self.hideAlert()
                 
-                self.tableHeaderView.refresh()
+            case .loaded(let accountModel):
+                self.activityIndicator.stopAnimating()
+                self.updateRefreshButton(hidden: true)
+                self.tableView.isHidden = false
                 self.reloadData(data: accountModel.accounts)
+                
             case .error(let error):
-                print("Got error! \(error)")
+                self.activityIndicator.stopAnimating()
+                self.tableView.isHidden = true
+                self.alertView.setAlert(alertType: .error, message: error)
+                self.showAlert()
+                self.updateRefreshButton(hidden: false)
+                
+            case .initialised:
+                break
             }
         }.store(in: &cancellables)
+        
+        refreshButton.addTarget(self, action: #selector(refreshButtonTapped), for: .touchUpInside)
     }
     
     // MARK: - Helper Functions
-    
     private func configureTableView() {
         tableView.register(AccountCell.self, forCellReuseIdentifier: Constants.accountReuseIdentifier)
+        tableView.register(AccountsListHeader.self, forHeaderFooterViewReuseIdentifier: Constants.accountHeaderViewReuseIdentifier)
         tableView.dataSource = dataSource
         tableView.backgroundView = BackgroundCurveView()
         tableView.separatorStyle = .none
+        tableView.sectionHeaderHeight = UITableView.automaticDimension
     }
     
     func layoutViews() {
         NSLayoutConstraint.activate([
+            
+            alertView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            alertView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            alertView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            alertView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            
+            refreshButton.topAnchor.constraint(equalTo: alertView.bottomAnchor, constant: 20),
+            refreshButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            refreshButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            
+            // Table View
             tableView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            // Activity Indicator
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
     }
     
@@ -146,12 +211,31 @@ final class AccountsViewController: UIViewController {
         dataSource.apply(snapshot, animatingDifferences: true)
     }
     
+    // MARK: - Hide/Show UI Functions
     
+    private func updateRefreshButton(hidden: Bool) {
+        refreshButton.isHidden = hidden
+    }
+    
+    private func showAlert() {
+        alertView.isHidden = false
+    }
+    
+    private func hideAlert() {
+        alertView.isHidden = true
+    }
+    
+    // MARK: - Objc Functions
+    @objc
+    private func refreshButtonTapped() {
+        viewModel.fetch()
+    }
 }
 // MARK: - Constants
 extension AccountsViewController {
     enum Constants {
         static let accountReuseIdentifier = "AccountCell"
+        static let accountHeaderViewReuseIdentifier = "AccountHeaderView"
     }
 }
 
@@ -161,4 +245,16 @@ extension AccountsViewController: UITableViewDelegate {
         viewModel.didSelectAccount(at: indexPath.row)
     }
     
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: Constants.accountHeaderViewReuseIdentifier) as? AccountsListHeader
+        view?.totalValueLabel.text = viewModel.totalPlanValue
+        view?.welcomeLabel.text = viewModel.welcomeString
+        view?.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }
+    
+    func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
+        return 400
+    }
 }

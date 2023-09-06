@@ -26,7 +26,7 @@ final class AccountsCoordinator: Coordinator {
     }
     
     func start() {
-        let accountsViewModel = AccountsViewModel(dataProvider: dataProvider)
+        let accountsViewModel = AccountsViewModel(dataProvider: dataProvider, user: user)
         let viewController = AccountsViewController(accountsViewModel: accountsViewModel)
         
         // Inject closure to handle callback for navigating to a specific account.

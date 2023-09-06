@@ -57,6 +57,12 @@ final class AccountDetailViewController: UIViewController {
         return view
     }()
     
+    private let alertView: AlertView = {
+        let alert = AlertView()
+        alert.translatesAutoresizingMaskIntoConstraints = false
+        return alert
+    }()
+    
     private let activityIndicator: UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView(style: .large)
         spinner.color = .lightDarkTeal
@@ -78,9 +84,10 @@ final class AccountDetailViewController: UIViewController {
     
     // MARK: - View Lifecycle
     override func viewDidLoad() {
-        view.addSubview(backgroundCurveView)
+//        view.addSubview(backgroundCurveView)
         view.addSubview(accountNameLabel)
         view.addSubview(moneyBoxLabel)
+        view.addSubview(alertView)
         view.addSubview(addMoneyButton)
         
         addMoneyButton.addSubview(activityIndicator)
@@ -102,16 +109,20 @@ final class AccountDetailViewController: UIViewController {
                 case .initialised:
                     // Show the account state, no updates yet.
                     self.addMoneyButton.isEnabled = true
+                    self.hideAlert()
                     break
                 case .loading:
                     self.disableButton()
+                    self.hideAlert()
                     print("🛜 loading")
                 case .loaded:
-                    // Show UI for successful adding
+                    self.alertView.setAlert(alertType: .success, message: Constants.alertViewSuccessMessage)
+                    self.showAlert()
                     self.enableButton()
                     print("✅ loaded!")
                 case .error(let error):
-                    // Show error label on screen
+                    self.alertView.setAlert(alertType: .error, message: error)
+                    self.showAlert()
                     self.enableButton()
                     print("💥 \(error)!")
                 }
@@ -132,10 +143,10 @@ final class AccountDetailViewController: UIViewController {
         NSLayoutConstraint.activate([
             
             // MARK: Background View
-            backgroundCurveView.topAnchor.constraint(equalTo: view.topAnchor),
-            backgroundCurveView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            backgroundCurveView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            backgroundCurveView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+//            backgroundCurveView.topAnchor.constraint(equalTo: view.topAnchor),
+//            backgroundCurveView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+//            backgroundCurveView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+//            backgroundCurveView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             // MARK: Title Label
             accountNameLabel.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: 20),
@@ -154,9 +165,14 @@ final class AccountDetailViewController: UIViewController {
             activityIndicator.centerYAnchor.constraint(equalTo: addMoneyButton.centerYAnchor),
             activityIndicator.centerXAnchor.constraint(equalTo: addMoneyButton.centerXAnchor),
             
+            alertView.bottomAnchor.constraint(equalTo: addMoneyButton.topAnchor, constant: -20),
+            alertView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            alertView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            
         ])
     }
     
+    // MARK: - Target Action
     @objc
     func addMoneyButtonTapped() {
         viewModel.didTapAddMoneyButton()
@@ -177,5 +193,23 @@ final class AccountDetailViewController: UIViewController {
             self.addMoneyButton.setTitle(self.viewModel.buttonTitle, for: .normal)
             self.addMoneyButton.backgroundColor = UIColor.lightTeal
         }
+    }
+    
+    private func hideAlert() {
+        DispatchQueue.main.async {
+            self.alertView.isHidden = true
+        }
+    }
+    
+    private func showAlert() {
+        DispatchQueue.main.async {
+            self.alertView.isHidden = false
+        }
+    }
+}
+
+private extension AccountDetailViewController {
+    enum Constants {
+        static let alertViewSuccessMessage = "Money added!"
     }
 }

@@ -45,11 +45,12 @@ final class LoginViewController: UIViewController {
         return textField
     }()
     
-    var loginButton: UIButton = {
+    private lazy var loginButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Login", for: .normal)
+        button.setTitle(viewModel.loginButtonTitle, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = UIColor(red: 0.12, green: 0.82, blue: 0.63, alpha: 1.0)
+        button.backgroundColor = UIColor.lightTeal
+        button.setTitleColor(.darkTeal, for: .normal)
         button.layer.cornerCurve = .continuous
         button.layer.cornerRadius = 9
         button.setTitleColor(.gray, for: .selected)
@@ -92,6 +93,22 @@ final class LoginViewController: UIViewController {
         return view
     }()
     
+    private let activityIndicator: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView(style: .large)
+        spinner.color = .lightDarkTeal
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.hidesWhenStopped = true
+        spinner.stopAnimating()
+        return spinner
+    }()
+    
+    private let alertView: AlertView = {
+        let alert = AlertView()
+        alert.translatesAutoresizingMaskIntoConstraints = false
+        alert.isHidden = true
+        return alert
+    }()
+    
     // MARK: - Init
     init(loginViewModel: LoginViewModel) {
         self.viewModel = loginViewModel
@@ -104,6 +121,8 @@ final class LoginViewController: UIViewController {
     
     // MARK: - View Lifecycle
     override func viewDidLoad() {
+        
+        // Add Subviews
         view.addSubview(backgroundCurveView)
         view.addSubview(loginTitle)
         view.addSubview(stackView)
@@ -111,7 +130,10 @@ final class LoginViewController: UIViewController {
         
         stackView.addArrangedSubview(emailTextField)
         stackView.addArrangedSubview(passwordTextField)
+        view.addSubview(alertView)
         view.addSubview(loginButton)
+
+        loginButton.addSubview(activityIndicator)
         
         view.backgroundColor = UIColor(named: "background_color")
         
@@ -120,44 +142,37 @@ final class LoginViewController: UIViewController {
         layoutViews()
     }
     
-    private func layoutViews() {
-        NSLayoutConstraint.activate([
-            
-            // MARK: Background View
-            backgroundCurveView.topAnchor.constraint(equalTo: view.topAnchor),
-            backgroundCurveView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            backgroundCurveView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            backgroundCurveView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
-            // MARK: Moneybox Logo
-            moneyBoxLogo.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
-            moneyBoxLogo.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            moneyBoxLogo.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            
-            // MARK: Title Label
-            loginTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            loginTitle.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            loginTitle.bottomAnchor.constraint(equalTo: stackView.topAnchor, constant: -20),
-            
-            // MARK: Stack View Constraints
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -150),
-            
-            // MARK: Login Button Constraints
-            loginButton.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 20),
-            loginButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            loginButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-        ])
-    }
-    
-    // MARK: Subscription Logic
+    // MARK: - Subscription Logic
     private func subscribe() {
+        
+        // Subscribe to overall view state
+        viewModel.viewState
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { state in
+                switch state {
+                case .initialised:
+                    self.enableButton()
+                case .loggingIn:
+                    self.hideAlert()
+                    self.disableButton()
+                case .loggedIn:
+                    self.activityIndicator.stopAnimating()
+                    self.alertView.setAlert(alertType: .success, message: Constants.alertViewSuccessMessage)
+                    self.showAlert()
+                case .error(let error):
+                    self.enableButton()
+                    self.alertView.setAlert(alertType: .error, message: error)
+                    self.showAlert()
+                }
+                
+            }).store(in: &cancellables)
+        
+        // Login button
         viewModel.loginButtonEnabled
             .receive(on: DispatchQueue.main)
             .sink { enabled in
                 self.loginButton.isEnabled = enabled
-                self.loginButton.backgroundColor = enabled ? UIColor(red: 0.12, green: 0.82, blue: 0.63, alpha: 1.0) : .systemGray
+                self.loginButton.backgroundColor = enabled ? .lightTeal : .systemGray
             }
             .store(in: &cancellables)
      
@@ -165,10 +180,79 @@ final class LoginViewController: UIViewController {
         
     }
     
+    // MARK: - Layout Logic
+    private func layoutViews() {
+        NSLayoutConstraint.activate([
+            
+            // Background View
+            backgroundCurveView.topAnchor.constraint(equalTo: view.topAnchor),
+            backgroundCurveView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backgroundCurveView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            backgroundCurveView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            // Moneybox Logo
+            moneyBoxLogo.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
+            moneyBoxLogo.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            moneyBoxLogo.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            
+            // Title Label
+//            loginTitle.topAnchor.constraint(equalTo: moneyBoxLogo.bottomAnchor, constant: 40),
+            loginTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            loginTitle.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            loginTitle.bottomAnchor.constraint(equalTo: stackView.topAnchor, constant: -20),
+            
+            // Stack View Constraints
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            stackView.bottomAnchor.constraint(equalTo: loginButton.topAnchor, constant: -20),
+            
+            // Alert View Constraints
+            alertView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            alertView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            alertView.bottomAnchor.constraint(equalTo: loginTitle.topAnchor, constant: -20),
+            
+            // Login Button Constraints
+//            loginButton.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 20),
+            loginButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            loginButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            loginButton.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: -20),
+            
+            activityIndicator.centerYAnchor.constraint(equalTo: loginButton.centerYAnchor),
+            activityIndicator.centerXAnchor.constraint(equalTo: loginButton.centerXAnchor),
+            
+        ])
+    }
+    
     // MARK: - Target Action
     @objc private func loginButtonTapped() {
         viewModel.loginTapped()
     }
+    
+    // MARK: - Helper Functions
+    private func disableButton() {
+        loginButton.setTitle("", for: .normal)
+        loginButton.backgroundColor = UIColor.buttonDisabledColor
+        activityIndicator.startAnimating()
+    }
+    
+    private func enableButton() {
+        activityIndicator.stopAnimating()
+        loginButton.setTitle(self.viewModel.loginButtonTitle, for: .normal)
+        loginButton.backgroundColor = UIColor.lightTeal
+    }
+    
+    private func hideAlert() {
+        DispatchQueue.main.async {
+            self.alertView.isHidden = true
+        }
+    }
+    
+    private func showAlert() {
+        DispatchQueue.main.async {
+            self.alertView.isHidden = false
+        }
+    }
+    
 }
 
 // MARK: - UITextFieldDelegate
@@ -186,5 +270,12 @@ extension LoginViewController: UITextFieldDelegate {
             print("⚠️ Unknown text field change...")
         }
         
+    }
+}
+
+// MARK: - Constants
+private extension LoginViewController {
+    enum Constants {
+        static let alertViewSuccessMessage = "Logged in!"
     }
 }
