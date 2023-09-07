@@ -59,7 +59,7 @@ final class AccountsViewController: UIViewController {
     
     private let activityIndicator: UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView(style: .large)
-        spinner.color = .lightDarkTealInverse
+        spinner.color = .white
         spinner.translatesAutoresizingMaskIntoConstraints = false
         spinner.hidesWhenStopped = true
         spinner.stopAnimating()

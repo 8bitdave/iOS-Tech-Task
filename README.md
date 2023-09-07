@@ -16,7 +16,8 @@ In terms of design, I started in sketch and wanted to use some of the Moneybox c
 
 
 ### Animation
-![](Media/moneybox_app_animation.mp4)
+Note the the animation is much smoother in app compared to GIF format.
+![](Media/moneybox_app_animation.gif)
 
 ## Architecture
 
@@ -32,12 +33,12 @@ What I opted to go with in the interest of time was the ability to support large
 
 ## Unit Testing
 In my opinion ideally the view would have very little logic inside it and the bulk of the logic would remain in the view models. That way we have no reliance on a UI based framework such as UIKit or SwiftUI. Out View Models would remain agnostic of the framework being used.
-It's important to make use of protocols so that we can mock our dependencies that normally perform  
+It's important to make use of protocols so that we can mock our dependencies that normally perform effects out of reach on external dependencies.
 For testing the UI itself we can make use of actual UI Tests to check for the presence of UI elements using accessibility identifiers.
 
 ## Bonus Feature - Dark Mode
 As a bonus, I've added both light and dark mode to the app.
-![](Media/light_dark_mode.mp4)
+![](Media/light_dark_mode.png)
 
 ## What I'd do with more time
 ### Dependence on Networking Swift Package
