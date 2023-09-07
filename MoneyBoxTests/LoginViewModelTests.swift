@@ -57,7 +57,7 @@ final class LoginViewModelTests: XCTestCase {
             
         }.store(in: &cancellables)
         
-        // WhenI have no value in the email AND password fields
+        // When I have no value in the email AND password fields
         sut.emailFieldText.value = ""
         sut.passwordFieldText.value = ""
         

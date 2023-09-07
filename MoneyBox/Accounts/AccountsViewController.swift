@@ -172,6 +172,7 @@ final class AccountsViewController: UIViewController {
     private func configureTableView() {
         tableView.register(AccountCell.self, forCellReuseIdentifier: Constants.accountReuseIdentifier)
         tableView.register(AccountsListHeader.self, forHeaderFooterViewReuseIdentifier: Constants.accountHeaderViewReuseIdentifier)
+        tableView.register(AccountsListFooter.self, forHeaderFooterViewReuseIdentifier: Constants.accountFooterViewReuseIdentifier)
         tableView.dataSource = dataSource
         tableView.backgroundView = BackgroundCurveView()
         tableView.separatorStyle = .none
@@ -235,6 +236,7 @@ extension AccountsViewController {
     enum Constants {
         static let accountReuseIdentifier = "AccountCell"
         static let accountHeaderViewReuseIdentifier = "AccountHeaderView"
+        static let accountFooterViewReuseIdentifier = "AccountFooterView"
     }
 }
 
@@ -252,7 +254,16 @@ extension AccountsViewController: UITableViewDelegate {
         return view
     }
     
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: Constants.accountFooterViewReuseIdentifier) as? AccountsListFooter
+        return view
+    }
+    
     func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
         return 400
+    }
+    
+    func tableView(_ tableView: UITableView, estimatedHeightForFooterInSection section: Int) -> CGFloat {
+        return 200
     }
 }

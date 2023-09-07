@@ -34,8 +34,8 @@ final class LoginViewModel {
     
     // MARK: - Public
     let loginButtonTitle = "Login"
-    var emailFieldText: CurrentValueSubject<String, Never> = .init("test+ios2@moneyboxapp.com")
-    var passwordFieldText: CurrentValueSubject<String, Never> = .init("P455word12")
+    var emailFieldText: CurrentValueSubject<String, Never> = .init("")
+    var passwordFieldText: CurrentValueSubject<String, Never> = .init("")
     var loginButtonEnabled: CurrentValueSubject<Bool, Never> = .init(false)
     var viewState: CurrentValueSubject<ViewState, Never> = .init(.initialised)
     
