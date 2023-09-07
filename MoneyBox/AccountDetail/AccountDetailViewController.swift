@@ -33,7 +33,7 @@ final class AccountDetailViewController: UIViewController {
     private lazy var accountNameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.preferredFont(forTextStyle: .largeTitle)
-        label.text = viewModel.accountName
+        label.text = viewModel.accountNameString
         label.textColor = .lightDarkTealInverse
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isHidden = false
@@ -44,7 +44,7 @@ final class AccountDetailViewController: UIViewController {
     private lazy var planValueLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.preferredFont(forTextStyle: .title3)
-        label.text = viewModel.planValue
+        label.text = viewModel.planValueString
         label.textColor = .lightDarkTealInverse
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
@@ -55,7 +55,7 @@ final class AccountDetailViewController: UIViewController {
     private lazy var moneyBoxLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.preferredFont(forTextStyle: .headline)
-        label.text = viewModel.moneyBoxValue.value
+        label.text = viewModel.moneyBoxValueString.value
         label.textColor = .lightDarkTealInverse
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isHidden = false
@@ -167,7 +167,7 @@ final class AccountDetailViewController: UIViewController {
             }.store(in: &cancellables)
         
         // Subscribe to the moneybox value being updated
-        viewModel.moneyBoxValue
+        viewModel.moneyBoxValueString
             .receive(on: DispatchQueue.main)
             .sink { moneyBox in
                 self.moneyBoxLabel.text = moneyBox

@@ -38,8 +38,7 @@ final class AccountsViewModelTests: XCTestCase {
         // Given
         let sut = AccountsViewModel(dataProvider: mockProvider, user: mockUser)
         
-        // Subscribe to the viewState changes so we can monitor them while
-        // the networking is happening.
+        // Subscribe to the viewState changes so we can monitor them.
         // Ignore the first two states, as these are initialised and loading.
         sut.viewState.dropFirst(2).sink(receiveValue: { state in
             switch state {
@@ -138,8 +137,7 @@ final class AccountsViewModelTests: XCTestCase {
         // Given
         let sut = AccountsViewModel(dataProvider: mockProvider, user: mockUser)
         
-        // Subscribe to the viewState changes so we can monitor them while
-        // the networking is happening.
+        // Subscribe to the viewState changes so we can monitor them.
         // Ignore the first two states, as these are initialised and loading.
         sut.viewState.dropFirst(2).sink(receiveValue: { state in
             switch state {
@@ -171,8 +169,7 @@ final class AccountsViewModelTests: XCTestCase {
         // Given
         let sut = AccountsViewModel(dataProvider: mockProvider, user: mockUser)
         
-        // Subscribe to the viewState changes so we can monitor them while
-        // the networking is happening.
+        // Subscribe to the viewState changes so we can monitor them.
         // Ignore the first two states, as these are initialised and loading.
         sut.viewState.dropFirst(2).sink(receiveValue: { state in
             switch state {

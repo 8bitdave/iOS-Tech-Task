@@ -24,26 +24,25 @@ final class AccountDetailViewModel {
     // MARK: Public
     var viewState: CurrentValueSubject<ViewState, Never> = .init(.initialised)
     var buttonTitle = "Add £\(Constants.incrementAmount)"
-    let accountType = "Individual Savings"
-    let accountName: String
-    let planValue: String
-    let moneyBoxValue: CurrentValueSubject<String, Never> = .init("")
-    
-    
-    var accountDetailDidCloseAction: (() -> Void)?
+    let accountNameString: String
+    let planValueString: String
+    let moneyBoxValueString: CurrentValueSubject<String, Never> = .init("")
     
     // MARK: Private
     private var dataProvider: DataProviderLogic
     private var investorID: Int
     
+    // MARK: Coordinator Injection
+    var accountDetailDidCloseAction: (() -> Void)?
+    
     
     // MARK: - Init
     init(account: Account, dataProvider: DataProviderLogic) {
-        self.accountName = account.name
-        self.planValue = "Plan value: " + String.createCurrencyString(from: account.planValue, currency: .GBP)
+        self.accountNameString = account.name
+        self.planValueString = "Plan value: " + String.createCurrencyString(from: account.planValue, currency: .GBP)
         self.dataProvider = dataProvider
         self.investorID = account.investorID
-        self.moneyBoxValue.value = createMoneyBoxString(from: account.moneyBoxValue)
+        self.moneyBoxValueString.value = createMoneyBoxString(from: account.moneyBoxValue)
     }
     
     
@@ -53,22 +52,22 @@ final class AccountDetailViewModel {
         // Update UI to show loading state
         viewState.value = .loading
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            let request = OneOffPaymentRequest(amount: Constants.incrementAmount, investorProductID: self.investorID)
-            
-            self.dataProvider.addMoney(request: request) { result in
-                switch result {
-                case .success(let response):
-                    guard let newMoneyBoxValue = response.moneybox else { return }
-                    self.viewState.send(.loaded)
-                    self.moneyBoxValue.value = self.createMoneyBoxString(from: newMoneyBoxValue)
-                case .failure(let error):
-                    let errorString = self.createErrorString(from: error)
-                    self.viewState.send(.error(errorString))
-                }
+        
+        let request = OneOffPaymentRequest(amount: Constants.incrementAmount, investorProductID: self.investorID)
+        
+        self.dataProvider.addMoney(request: request) { result in
+            switch result {
+            case .success(let response):
+                guard let newMoneyBoxValue = response.moneybox else { return }
+                self.moneyBoxValueString.value = self.createMoneyBoxString(from: newMoneyBoxValue)
+                self.viewState.send(.loaded)
+            case .failure(let error):
+                let errorString = self.createErrorString(from: error)
+                self.viewState.send(.error(errorString))
             }
         }
-       
+        
+        
     }
     
     func viewWillClose() {

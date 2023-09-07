@@ -134,4 +134,65 @@ final class LoginViewModelTests: XCTestCase {
         waitForExpectations(timeout: 0.5)
     }
     
+    func test_loginViewModel_loginSuccess() {
+        
+        let viewStateLoggedInExpectation = expectation(description: "Expected viewState to be of case loggedIn")
+        
+        let mockLoginResponse = Bundle.test.decode(LoginResponse.self, from: "LoginSucceed.json")
+        let mockDataProvider = MockDataProvider()
+        mockDataProvider.mockLoginResponse = mockLoginResponse
+        
+        // Given
+        let sut = LoginViewModel(dataProvider: mockDataProvider)
+        
+        // Subscribe to the viewState changes so we can monitor them.
+        // Ignore the first two states, as these are initialised and loading.
+        sut.viewState.dropFirst(2).sink { state in
+            switch state {
+            case .loggedIn:
+                viewStateLoggedInExpectation.fulfill()
+            default:
+                XCTFail("Expected loggedIn state")
+            }
+        }.store(in: &cancellables)
+        
+        // When
+        sut.loginTapped()
+        
+        // Then
+        waitForExpectations(timeout: 1.0)
+    }
+    
+    func test_loginViewModel_loginError() {
+        
+        let viewStateErrorExpectation = expectation(description: "Expected viewState to be of case error")
+        
+        let mockLoginResponse = Bundle.test.decode(LoginResponse.self, from: "LoginSucceed.json")
+        let mockDataProvider = MockDataProvider()
+        mockDataProvider.mockLoginResponse = mockLoginResponse
+        mockDataProvider.shouldFailLogin = true
+        
+        // Given
+        let sut = LoginViewModel(dataProvider: mockDataProvider)
+        
+        
+        // Subscribe to the viewState changes so we can monitor them.
+        // Ignore the first two states, as these are initialised and loading.
+        sut.viewState.dropFirst(2).sink { state in
+            switch state {
+            case .error(let error):
+                XCTAssertEqual(error, "The operation couldn’t be completed. (MoneyBoxTests.MockDataProvider.DataProviderError error 2.)")
+                viewStateErrorExpectation.fulfill()
+            default:
+                XCTFail("Expected loggedIn state")
+            }
+        }.store(in: &cancellables)
+        
+        // When
+        sut.loginTapped()
+        
+        // Then
+        waitForExpectations(timeout: 1.0)
+    }
+    
 }

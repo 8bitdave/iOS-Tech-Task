@@ -10,11 +10,22 @@ import Networking
 import Foundation
 
 struct Account: Hashable {
+    
+    // MARK: - Properties
     let id = UUID()
     let investorID: Int
     let name: String
     let planValue: Double
     let moneyBoxValue: Double
+    
+    // MARK: - Init
+    internal init(investorID: Int, name: String, planValue: Double, moneyBoxValue: Double) {
+        self.investorID = investorID
+        self.name = name
+        self.planValue = planValue
+        self.moneyBoxValue = moneyBoxValue
+    }
+    
 }
 
 struct AccountsModel {

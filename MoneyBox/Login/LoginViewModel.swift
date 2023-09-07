@@ -69,7 +69,6 @@ final class LoginViewModel {
         // Set state to loading to lock UI.
         viewState.value = .loggingIn
         
-        // Create request
         let loginRequest = LoginRequest(email: emailFieldText.value, password: passwordFieldText.value)
         
         dataProvider.login(request: loginRequest) { [weak self] result in
@@ -79,17 +78,12 @@ final class LoginViewModel {
                 SessionManager().setUserToken(response.session.bearerToken) // Make injectable
                 
                 // Allow the success screen to show
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     self?.loginAction?(response.user)
                 }
             case .failure(let error):
                 self?.viewState.send(.error(error.localizedDescription))
             }
         }
-        
-        // 1. Create network request
-        // 2. Call network service with request
-        // 3. Wait for response (update UI)
-        // 4. Either log user in and communicate to coordinator OR present error message
     }
 }

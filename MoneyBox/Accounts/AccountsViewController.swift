@@ -40,7 +40,7 @@ final class AccountsViewController: UIViewController {
     
     // MARK: - UI Properties
     lazy var tableView: UITableView = {
-        let tableView = UITableView()
+        let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = UIColor.backgroundColor
         tableView.delegate = self

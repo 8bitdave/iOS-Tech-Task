@@ -14,11 +14,21 @@ extension String {
     }
     
     static func createCurrencyString(from number: Double, currency: CurrencyType = .GBP) -> String {
+        
+        let formatter = NumberFormatter()
+             formatter.minimumFractionDigits = 2
+             formatter.maximumFractionDigits = 2
+             formatter.minimumIntegerDigits = 1
+             formatter.paddingPosition = .afterPrefix
+             formatter.paddingCharacter = "0"
+         
+        guard let formattedNumber = formatter.string(from: NSNumber.init(value: number)) else { return "" }
+        
         switch currency {
         case .GBP:
-            return "£\(number.rounded(toPlaces: 2))"
+            return "£\(formattedNumber)"
         case .EUR:
-            return "€\(number.rounded(toPlaces: 2))"
+            return "€\(formattedNumber)"
         }
     }
 }
