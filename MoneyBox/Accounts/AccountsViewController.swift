@@ -143,7 +143,6 @@ final class AccountsViewController: UIViewController {
             .sink { state in
             switch state {
             case .loading:
-                print("show loading screen")
                 self.activityIndicator.startAnimating()
                 self.updateRefreshButton(hidden: true)
                 self.hideAlert()
@@ -249,7 +248,6 @@ extension AccountsViewController: UITableViewDelegate {
         let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: Constants.accountHeaderViewReuseIdentifier) as? AccountsListHeader
         view?.totalValueLabel.text = viewModel.totalPlanValue
         view?.welcomeLabel.text = viewModel.welcomeString
-        view?.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }

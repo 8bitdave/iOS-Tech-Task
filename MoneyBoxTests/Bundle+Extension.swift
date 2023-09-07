@@ -37,3 +37,7 @@ extension Bundle {
         }
     }
 }
+
+extension Bundle {
+    static let test = Bundle(for: LoginViewModelTests.self)
+}

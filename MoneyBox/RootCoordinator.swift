@@ -38,21 +38,25 @@ final class RootCoordinator: Coordinator {
             loginCoordinator.userDidLogInClosure = { [weak self] user in
                 self?.user = user
                 self?.navigateToMyAccount()
-                self?.childCoordinators.removeAll()
             }
+            
+            loginCoordinator.parentCoordinator = self
             
             loginCoordinator.start()
             childCoordinators.append(loginCoordinator)
-            
+            print("ROOT COORD CHILDEN: \(childCoordinators)")
         }
     }
     
     private func navigateToMyAccount() {
+        print("ROOT COORD CHILDEN: \(childCoordinators)")
         guard let user = user else { return }
         
         let myAccountCoordinator = AccountsCoordinator(navigationController: navigationController, dataProvider: dataProvider, user: user)
+
         myAccountCoordinator.start()
         childCoordinators.append(myAccountCoordinator)
+        print("ROOT COORD CHILDEN: \(childCoordinators)")
     }
     
 }

@@ -27,13 +27,14 @@ final class AccountDetailViewModel {
     let accountType = "Individual Savings"
     let accountName: String
     let planValue: String
-    var moneyBoxValue: CurrentValueSubject<String, Never> = .init("")
+    let moneyBoxValue: CurrentValueSubject<String, Never> = .init("")
+    
+    
+    var accountDetailDidCloseAction: (() -> Void)?
     
     // MARK: Private
     private var dataProvider: DataProviderLogic
     private var investorID: Int
-    
-    var shouldFail = true
     
     
     // MARK: - Init
@@ -53,7 +54,8 @@ final class AccountDetailViewModel {
         viewState.value = .loading
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            let request = OneOffPaymentRequest(amount: Constants.incrementAmount, investorProductID: self.shouldFail ? 12434 : self.investorID)
+            let request = OneOffPaymentRequest(amount: Constants.incrementAmount, investorProductID: self.investorID)
+            
             self.dataProvider.addMoney(request: request) { result in
                 switch result {
                 case .success(let response):
@@ -62,12 +64,15 @@ final class AccountDetailViewModel {
                     self.moneyBoxValue.value = self.createMoneyBoxString(from: newMoneyBoxValue)
                 case .failure(let error):
                     let errorString = self.createErrorString(from: error)
-                    self.shouldFail = false
                     self.viewState.send(.error(errorString))
                 }
             }
         }
        
+    }
+    
+    func viewWillClose() {
+        accountDetailDidCloseAction?()
     }
     
     private func createMoneyBoxString(from value: Double) -> String {

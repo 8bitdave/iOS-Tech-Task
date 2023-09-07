@@ -15,6 +15,7 @@ final class AccountDetailCoordinator: Coordinator {
     // MARK: Public
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
+    weak var parentCoordinator: AccountsCoordinator?
     
     // MARK: Private
     private let dataProvider: DataProviderLogic
@@ -30,9 +31,12 @@ final class AccountDetailCoordinator: Coordinator {
     
     func start() {
         let viewModel = AccountDetailViewModel(account: account, dataProvider: dataProvider)
+        viewModel.accountDetailDidCloseAction = {
+            self.parentCoordinator?.childDidFinish(self)
+        }
+        
         let viewController = AccountDetailViewController(viewModel: viewModel)
         
         navigationController.pushViewController(viewController, animated: true)
     }
-    
 }

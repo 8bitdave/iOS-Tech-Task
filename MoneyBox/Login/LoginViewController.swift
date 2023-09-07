@@ -71,7 +71,7 @@ final class LoginViewController: UIViewController {
     
     private let loginTitle: UILabel = {
         let label = UILabel()
-        label.font = UIFont(name: "SF Pro Text Bold", size: 34)
+        label.font = UIFont.preferredFont(forTextStyle: .largeTitle)
         label.text = "Login"
         label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false

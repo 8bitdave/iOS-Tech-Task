@@ -33,10 +33,6 @@ final class AccountsViewModel {
     
     // MARK: - Properties
     
-    // Private
-    private let dataProvider: DataProviderLogic
-    private var accounts: [Account] = []
-    
     // Public
     var viewState: CurrentValueSubject<ViewState, Never> = .init(.initialised)
     var shouldReload: Bool = false
@@ -44,10 +40,12 @@ final class AccountsViewModel {
     var totalPlanValue: String = ""
     var welcomeString: String
     
+    // Private
+    private let dataProvider: DataProviderLogic
+    private var accounts: [Account] = []
+    
     // MARK: - Coordinator Injection
     var navigateToAccountAction: ((Account) -> Void)?
-    
-    var shouldFail = true
     
     // MARK: - Init
     init(dataProvider: DataProviderLogic, user: Networking.LoginResponse.User) {
@@ -84,13 +82,12 @@ final class AccountsViewModel {
                 self.viewState.send(.error(error.localizedDescription))
             }
         }
-        
-        print("Fetching data...")
     }
     
     func didSelectAccount(at index: Int) {
         // Guard that we have a valid account
         guard let account = accounts[safe: index] else { return }
+        
         // Let the VC know it should request data when navigating back from the account detail view
         shouldReload = true
         

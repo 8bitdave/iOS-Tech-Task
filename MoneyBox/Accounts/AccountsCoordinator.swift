@@ -17,7 +17,6 @@ final class AccountsCoordinator: Coordinator {
     private let dataProvider: DataProviderLogic
     private let user: Networking.LoginResponse.User
     
-    
     // MARK: - Init
     init(navigationController: UINavigationController, dataProvider: DataProviderLogic, user: Networking.LoginResponse.User) {
         self.navigationController = navigationController
@@ -41,6 +40,7 @@ final class AccountsCoordinator: Coordinator {
     
     private func navigateToAccount(account: Account) {
         let coordinator = AccountDetailCoordinator(navgationController: navigationController, dataProvider: dataProvider, account: account)
+        coordinator.parentCoordinator = self
         coordinator.start()
         childCoordinators.append(coordinator)
     }

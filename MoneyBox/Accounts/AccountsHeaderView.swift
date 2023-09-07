@@ -49,6 +49,24 @@ final class AccountsListHeader: UITableViewHeaderFooterView {
         label.textColor = .lightDarkTealInverse
         return label
     }()
+    
+    private let labelContainerStack: UIStackView = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.axis = .vertical
+        stack.distribution = .equalSpacing
+        stack.spacing = 15
+        return stack
+    }()
+    
+    private let planValueStack: UIStackView = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.axis = .vertical
+        stack.distribution = .fillProportionally
+        stack.spacing = 0
+        return stack
+    }()
 
     
     // MARK: - Exposed Properties
@@ -61,12 +79,14 @@ final class AccountsListHeader: UITableViewHeaderFooterView {
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
         
-        backgroundConfiguration = .listGroupedHeaderFooter()
+        addSubview(labelContainerStack)
+        labelContainerStack.addArrangedSubview(titleLabel)
+        labelContainerStack.addArrangedSubview(welcomeLabel)
+        labelContainerStack.addArrangedSubview(planValueStack)
         
-        addSubview(titleLabel)
-        addSubview(welcomeLabel)
-        addSubview(planValueTextLabel)
-        addSubview(totalValueLabel)
+        planValueStack.addArrangedSubview(planValueTextLabel)
+        planValueStack.addArrangedSubview(totalValueLabel)
+        
         layoutViews()
     }
     required init?(coder: NSCoder) {
@@ -75,28 +95,10 @@ final class AccountsListHeader: UITableViewHeaderFooterView {
 
     func layoutViews() {
         NSLayoutConstraint.activate([
-            
-            // Title Label
-            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 20),
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-            
-            // Total Value Label
-            welcomeLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10),
-            welcomeLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            welcomeLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-            
-            // Plan Value Text Label
-            planValueTextLabel.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: 20),
-            planValueTextLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            planValueTextLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-
-            // Total Value Label
-            totalValueLabel.topAnchor.constraint(equalTo: planValueTextLabel.bottomAnchor, constant: 5),
-            totalValueLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-            totalValueLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-            totalValueLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
-            
+            labelContainerStack.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+            labelContainerStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            labelContainerStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            labelContainerStack.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
 }

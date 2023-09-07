@@ -26,7 +26,7 @@ final class AccountDetailViewController: UIViewController {
         button.titleLabel?.adjustsFontForContentSizeCategory = true
         button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .title1)
         button.contentEdgeInsets = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
-        button.accessibilityLabel = "Add £10 to your moneybox account"
+        button.accessibilityLabel = "Add ten pounds to your moneybox account"
         return button
     }()
     
@@ -43,7 +43,7 @@ final class AccountDetailViewController: UIViewController {
     
     private lazy var planValueLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.preferredFont(forTextStyle: .title1)
+        label.font = UIFont.preferredFont(forTextStyle: .title3)
         label.text = viewModel.planValue
         label.textColor = .lightDarkTealInverse
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -54,7 +54,7 @@ final class AccountDetailViewController: UIViewController {
     
     private lazy var moneyBoxLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.preferredFont(forTextStyle: .title1)
+        label.font = UIFont.preferredFont(forTextStyle: .headline)
         label.text = viewModel.moneyBoxValue.value
         label.textColor = .lightDarkTealInverse
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -92,7 +92,7 @@ final class AccountDetailViewController: UIViewController {
         return imageView
     }()
     
-    var labelStackView: UIStackView = {
+    private var labelStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.distribution = .equalSpacing
@@ -100,6 +100,9 @@ final class AccountDetailViewController: UIViewController {
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
+    
+    // MARK: - Coordinator Communication
+    var accountDetailDidCloseAction: (() -> Void)?
     
     // MARK: - Init
     init(viewModel: AccountDetailViewModel) {
@@ -109,6 +112,12 @@ final class AccountDetailViewController: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        viewModel.viewWillClose()
+        viewModel.accountDetailDidCloseAction?()
     }
     
     // MARK: - View Lifecycle
@@ -136,27 +145,24 @@ final class AccountDetailViewController: UIViewController {
         // Subscribe to the view model state
         viewModel.viewState
             .receive(on: DispatchQueue.main)
-            .sink { state in
+            .sink { [weak self] state in
                 switch state {
                 case .initialised:
                     // Show the account state, no updates yet.
-                    self.addMoneyButton.isEnabled = true
-                    self.hideAlert()
+                    self?.addMoneyButton.isEnabled = true
+                    self?.hideAlert()
                     break
                 case .loading:
-                    self.disableButton()
-                    self.hideAlert()
-                    print("🛜 loading")
+                    self?.disableButton()
+                    self?.hideAlert()
                 case .loaded:
-                    self.alertView.setAlert(alertType: .success, message: Constants.alertViewSuccessMessage)
-                    self.showAlert()
-                    self.enableButton()
-                    print("✅ loaded!")
+                    self?.alertView.setAlert(alertType: .success, message: Constants.alertViewSuccessMessage)
+                    self?.showAlert()
+                    self?.enableButton()
                 case .error(let error):
-                    self.alertView.setAlert(alertType: .error, message: error)
-                    self.showAlert()
-                    self.enableButton()
-                    print("💥 \(error)!")
+                    self?.alertView.setAlert(alertType: .error, message: error)
+                    self?.showAlert()
+                    self?.enableButton()
                 }
             }.store(in: &cancellables)
         
@@ -204,31 +210,26 @@ final class AccountDetailViewController: UIViewController {
     
     // MARK: - Helper Functions
     private func disableButton() {
-        DispatchQueue.main.async {
-            self.addMoneyButton.setTitle("", for: .normal)
-            self.addMoneyButton.backgroundColor = UIColor.buttonDisabledColor
-            self.activityIndicator.startAnimating()
-        }
+        
+        self.addMoneyButton.setTitle("", for: .normal)
+        self.addMoneyButton.backgroundColor = UIColor.buttonDisabledColor
+        self.activityIndicator.startAnimating()
+        
     }
     
     private func enableButton() {
-        DispatchQueue.main.async {
-            self.activityIndicator.stopAnimating()
-            self.addMoneyButton.setTitle(self.viewModel.buttonTitle, for: .normal)
-            self.addMoneyButton.backgroundColor = UIColor.lightTeal
-        }
+        self.activityIndicator.stopAnimating()
+        self.addMoneyButton.setTitle(self.viewModel.buttonTitle, for: .normal)
+        self.addMoneyButton.backgroundColor = UIColor.lightTeal
+        
     }
     
     private func hideAlert() {
-        DispatchQueue.main.async {
-            self.alertView.isHidden = true
-        }
+        self.alertView.isHidden = true
     }
     
     private func showAlert() {
-        DispatchQueue.main.async {
-            self.alertView.isHidden = false
-        }
+        self.alertView.isHidden = false
     }
 }
 

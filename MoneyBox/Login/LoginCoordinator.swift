@@ -27,8 +27,8 @@ final class LoginCoordinator: Coordinator {
     func start() {
         let viewModel = LoginViewModel(dataProvider: dataProvider)
         
-        viewModel.loginAction = { [weak self] user in
-            self?.navigateToAccounts(user: user)
+        viewModel.loginAction = { user in
+            self.navigateToAccounts(user: user)
         }
         
         let viewController = LoginViewController(loginViewModel:
