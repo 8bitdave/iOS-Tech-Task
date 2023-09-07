@@ -196,7 +196,6 @@ final class LoginViewController: UIViewController {
             moneyBoxLogo.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
             // Title Label
-//            loginTitle.topAnchor.constraint(equalTo: moneyBoxLogo.bottomAnchor, constant: 40),
             loginTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             loginTitle.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             loginTitle.bottomAnchor.constraint(equalTo: stackView.topAnchor, constant: -20),
@@ -212,7 +211,6 @@ final class LoginViewController: UIViewController {
             alertView.bottomAnchor.constraint(equalTo: loginTitle.topAnchor, constant: -20),
             
             // Login Button Constraints
-//            loginButton.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 20),
             loginButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             loginButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             loginButton.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: -20),

@@ -9,8 +9,6 @@ import Combine
 import Foundation
 import Networking
 
-
-
 final class LoginViewModel {
     
     enum ViewState {
@@ -22,22 +20,20 @@ final class LoginViewModel {
     
     // MARK: - Properties
     
-    // MARK: Private
-    private var cancellables: Set<AnyCancellable> = []
-    private let dataProvider: DataProviderLogic
-    private let networkSession: SessionManager = SessionManager()
-    
-//    private let networkManager: NetworkManagable
-
-    // MARK: - Coordinator Injection
-    var loginAction: ((Networking.LoginResponse.User) -> Void)?
-    
-    // MARK: - Public
+    // Public
     let loginButtonTitle = "Login"
     var emailFieldText: CurrentValueSubject<String, Never> = .init("")
     var passwordFieldText: CurrentValueSubject<String, Never> = .init("")
     var loginButtonEnabled: CurrentValueSubject<Bool, Never> = .init(false)
     var viewState: CurrentValueSubject<ViewState, Never> = .init(.initialised)
+    
+    // Private
+    private var cancellables: Set<AnyCancellable> = []
+    private let dataProvider: DataProviderLogic
+    private let networkSession: SessionManager = SessionManager()
+
+    // Coordinator Injection
+    var loginAction: ((Networking.LoginResponse.User) -> Void)?
     
     // MARK: - Init
     init(dataProvider: DataProviderLogic) {

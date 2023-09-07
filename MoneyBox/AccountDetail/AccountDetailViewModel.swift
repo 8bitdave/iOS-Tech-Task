@@ -45,13 +45,11 @@ final class AccountDetailViewModel {
         self.moneyBoxValueString.value = createMoneyBoxString(from: account.moneyBoxValue)
     }
     
-    
     // MARK: - Helper Functions
     func didTapAddMoneyButton() {
         
         // Update UI to show loading state
         viewState.value = .loading
-        
         
         let request = OneOffPaymentRequest(amount: Constants.incrementAmount, investorProductID: self.investorID)
         
@@ -66,8 +64,6 @@ final class AccountDetailViewModel {
                 self.viewState.send(.error(errorString))
             }
         }
-        
-        
     }
     
     func viewWillClose() {
@@ -80,7 +76,6 @@ final class AccountDetailViewModel {
     
     private func createErrorString(from error: Error) -> String {
         return "\(error.localizedDescription) Please try again."
-        
     }
 }
 

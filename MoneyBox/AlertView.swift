@@ -29,12 +29,7 @@ final class AlertView: UIView {
         return label
     }()
     
-    // MARK: Private
-//    private let alertType: AlertType
-    
-    
     // MARK: - Init
-    
     init() {
         super.init(frame: .zero)
         
@@ -52,7 +47,7 @@ final class AlertView: UIView {
     }
     
     
-    // MARK: - Layout Views
+    // MARK: - Layout Logic
     private func layoutViews() {
         NSLayoutConstraint.activate([
             alertLabel.topAnchor.constraint(equalTo: topAnchor, constant: 20),
