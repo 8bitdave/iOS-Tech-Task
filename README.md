@@ -1,71 +1,47 @@
 
-# Moneybox iOS Technical Challenge
+# Moneybox Tech Task
 
-## The Brief
+The following describes my approach to the Moneybox Tech Task.
 
-To create a 'light' version of the Moneybox app that will allow existing users to login and check their account balance, as well as viewing their Moneybox savings. 
-- To fork this repository to your private repository and implement the solution.
- 
-### The app should have
-- A login screen to allow existing users to sign in
-- A screen to show the accounts the user holds, e.g. ISA, GIA
-- A screen to show some details of the account, including a simple button to add money to its moneybox.
-- The button will add a fixed amount of £10. It should use the `POST /oneoffpayments` endpoint provided, and the account's Moneybox amount would be updated.
 
-A prototype wireframe of all 3 screens is provided as a guideline. You are free to provide additional information if you wish.
-![](wireframe.png)
+## Design
 
-### What we are looking for
- - Demonstration of coding style, conventions and patterns.
- - Use of autolayout (preferably UIKit).
- - Implementation of unit tests.
- - Any accessibility feature would be a bonus.
- - The application must run on iOS 13 or later.
- - The application must compile and run on Xcode and be debugged in Xcode's iOS simulator.
- - Any 3rd party library should be integrated using Swift Package Manager.
- - No persistence of the user is required.
- - Showcase what you can do.
+### Motivation
+In terms of design, I started in sketch and wanted to use some of the Moneybox core colours such as teal. I wanted to give the app a bit of animation but also something that would sutbly suggest money going up in value. What I came up with was a bezier curve that gives the impression of a stock going up over time, starting lower and going higher.
 
-### API Usage
-The Networking methods and Models for requests and responses are ready-made in the Networking module of the project.
 
-#### Base URL & Test User
-The base URL for the moneybox sandbox environment is `https://api-test02.moneyboxapp.com/`. </br>
-You can log in using the following user:
+### Prototype in Sketch
 
-|  Username          | Password         |
-| ------------- | ------------- |
-| test+ios2@moneyboxapp.com  | P455word12  |
+![](Media/sketch_prototype.png)
 
-#### Authentication
-You should obtain a bearer token from the Login response, and attach it as an Authorization header for the endpoints. Helper methods in the API/Base folder should be used for that.
-(Note: The BearerToken has a sliding expiration of 5 mins).
 
-| Key  |  Value  |
-| ------------- | ------------- |
-| Authorization |  Bearer TsMWRkbrcu3NGrpf84gi2+pg0iOMVymyKklmkY0oI84= |
+### Animation
+![](Media/moneybox_app_animation.mp4)
 
-#### API Call Hint
+## Architecture
 
-```
-let dataProvider = DataProvider()
-dataProvider.login(request: request, completion: completion)
-```
-request: Initialize your request model </br>
-Completion: Handle your API success and failure cases
+For architecture I opted to use a MVVM+C pattern as I really like the separation of concers. I also really like the use of Combine so that we can set up bindings between view models and the view itself. I've made a lot of use of CurrentValueSubjects for when a View needs to be informed of a state change on the view model and I think these publishers are a fantastic way of achieving that. Coordinators allow for us to integrate screens anywhere in our app rather than it being a coupled flow to X->Y->Z, where we might sometimes want to go to X->Z and coordinators allow for this flow.
 
-## Unit Tests
-The MoneyBoxTests folder includes stubbed data to easily mock the responses needed for unit testing
+## Accessibility Feature
+For accessibility I would normally consider a wide range of options such as ensuring that Voice Over is making the correct announcements. Whether that is when navigating elements on the screen to announcements such as the page/request failed to load etc..
 
-#### Usage Hint
-You can create a DataProviderMock class via inject DataProviderLogic protocol </br>
-You can mock response in Login.json file like this:
-```
-StubData.read(file: "Login", callback: completion)
-```
+What I opted to go with in the interest of time was the ability to support large text size, so the application will respect the users text size accessibility settings and repond to these changes accordingly.
 
-### How to Submit your solution:
- - To share your Github repository with the user valerio-bettini.
- - (Optional) Provide a readme in markdown which outlines your solution.
+![](Media/accessibility_example.png)
 
-## Good luck!
+
+## Unit Testing
+In my opinion ideally the view would have very little logic inside it and the bulk of the logic would remain in the view models. That way we have no reliance on a UI based framework such as UIKit or SwiftUI. Out View Models would remain agnostic of the framework being used.
+It's important to make use of protocols so that we can mock our dependencies that normally perform  
+For testing the UI itself we can make use of actual UI Tests to check for the presence of UI elements using accessibility identifiers.
+
+## Bonus Feature - Dark Mode
+As a bonus, I've added both light and dark mode to the app.
+![](Media/light_dark_mode.mp4)
+
+## What I'd do with more time
+### Dependence on Networking Swift Package
+I dislike how coupled the app is with the Networking module itself, ideally my app should be agnostic of the networking layer under the hood. So with this, I would recommend to create a networking layer local to my application, it can still have functions such as login and fetchUserAccounts but the underlying system used for networking should not be my app's concern. This has benefits such as I don't need to change my API connections to my local networking layer if say down the line I choose to not use the Network package anymore, the API from my side stays the same but the private internals could change to something like Alamo Fire for example.
+
+### No Token Refreshing
+I didn't have time to implement a token refreshing mechanism so following my previous point about refactoring networking, I would also allow this to be achieved. Something along the lines of an auth manager that will determine if we are OK to refresh a token and then make the original request and if not, we can inform the user they need to be logged in again and navigate them back to the Login screen.
