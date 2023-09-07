@@ -28,7 +28,7 @@ For accessibility I would normally consider a wide range of options such as ensu
 
 What I opted to go with in the interest of time was the ability to support large text size, so the application will respect the users text size accessibility settings and repond to these changes accordingly.
 
-![](Media/accessibility_example.png)
+![](Media/accessibility_example2.png)
 
 
 ## Unit Testing
