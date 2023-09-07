@@ -15,6 +15,7 @@ final class LoginCoordinator: Coordinator {
     var navigationController: UINavigationController
     
     private var dataProvider: DataProviderLogic
+    weak var parentCoordinator: RootCoordinator?
     
     var userDidLogInClosure: ((Networking.LoginResponse.User) -> Void)?
  
@@ -27,8 +28,8 @@ final class LoginCoordinator: Coordinator {
     func start() {
         let viewModel = LoginViewModel(dataProvider: dataProvider)
         
-        viewModel.loginAction = { user in
-            self.navigateToAccounts(user: user)
+        viewModel.loginAction = { [weak self] user in
+            self?.navigateToAccounts(user: user)
         }
         
         let viewController = LoginViewController(loginViewModel:
@@ -40,6 +41,7 @@ final class LoginCoordinator: Coordinator {
     }
     
     private func navigateToAccounts(user: Networking.LoginResponse.User) {
+        parentCoordinator?.childDidFinish(self)
         userDidLogInClosure?(user)
     }
     
