@@ -21,7 +21,7 @@ Note the the animation is much smoother in app compared to GIF format.
 
 ## Architecture
 
-For architecture I opted to use a MVVM+C pattern as I really like the separation of concers. I also really like the use of Combine so that we can set up bindings between view models and the view itself. I've made a lot of use of CurrentValueSubjects for when a View needs to be informed of a state change on the view model and I think these publishers are a fantastic way of achieving that. Coordinators allow for us to integrate screens anywhere in our app rather than it being a coupled flow to X->Y->Z, where we might sometimes want to go to X->Z and coordinators allow for this flow.
+For architecture I opted to use a MVVM+C pattern as I really like the separation of concers. I also really like the use of Combine so that we can set up bindings between view models and the view itself. I've made a lot of use of CurrentValueSubjects for when a View needs to be informed of a state change on the view model and I think these publishers are a fantastic way of achieving that. Coordinators allow for us to integrate screens anywhere in our app rather than it being a coupled flow to X->Y->Z, where we might sometimes want to go to X->Z and coordinators allow for this flow. I love the separation of VM and views so that the VM is agnostic of the underlying UI framework being used. This means we can test the VMs without worrying about UIKit or SwiftUI.
 
 ## Accessibility Feature
 For accessibility I would normally consider a wide range of options such as ensuring that Voice Over is making the correct announcements. Whether that is when navigating elements on the screen to announcements such as the page/request failed to load etc..
